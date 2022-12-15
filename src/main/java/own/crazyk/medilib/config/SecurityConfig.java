@@ -1,7 +1,9 @@
 package own.crazyk.medilib.config;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,13 +17,28 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import own.crazyk.cmm.util.JWTUtil;
+import own.crazyk.medilib.web.jwt.JWTRequestFilter;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
 //	private AuthenticationEntryPoint entryPoint;
+	private JWTRequestFilter jwtRequestFilter;
+
+	@Value("jwt.private.key")
+	private String privateKey;
+	@Value("#{ new Long('${jwt.expiry.duration}')}")
+	private long expiryDuration;
+
+	@Bean
+	public JWTUtil jwtUtil() {
+		return new JWTUtil(privateKey, expiryDuration);
+	}
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -43,6 +60,7 @@ public class SecurityConfig {
 				.requestMatchers("/h2-console/**, /h2-console/login.jsp").permitAll()
 				.anyRequest().authenticated()
 			)
+			.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 //			.exceptionHandling()
 //			.authenticationEntryPoint(entryPoint)
 //			.and()

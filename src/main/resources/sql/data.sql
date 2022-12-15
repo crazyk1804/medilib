@@ -1,2 +1,2 @@
 delete from member;
-insert into member (identity, password, username) values ('hans1804@daum.net', '변환된 패스워드를 넣으시오', 'hand1804');
+insert into member (identity, password, username) values ('admin', '$2a$10$Gpd/cQXDN5XZgQL5lUThX.E5C/XI1syruUbSfbuZu8..8t.Hjs/z2', 'hand1804');

@@ -1,8 +1,6 @@
 package own.crazyk.medilib.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,6 +9,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter @Setter @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberDTO implements UserDetails {
 	private long idx;
 	private String identity;

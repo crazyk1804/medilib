@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -24,19 +25,27 @@ import own.crazyk.medilib.web.jwt.JWTRequestFilter;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 //	private AuthenticationEntryPoint entryPoint;
-	private JWTRequestFilter jwtRequestFilter;
+	private final UserDetailsService userDetailsService;
 
 	@Value("jwt.private.key")
 	private String privateKey;
 	@Value("#{ new Long('${jwt.expiry.duration}')}")
 	private long expiryDuration;
 
+	public SecurityConfig(UserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
+
 	@Bean
 	public JWTUtil jwtUtil() {
 		return new JWTUtil(privateKey, expiryDuration);
+	}
+
+	@Bean JWTRequestFilter jwtRequestFilter() {
+		// filter 를 component 로 등록해놓고 사용하니 순환참조 문제가 생겨서 bean 등록 별도로 해줌
+		return new JWTRequestFilter(userDetailsService, jwtUtil());
 	}
 
 	@Bean
@@ -60,7 +69,7 @@ public class SecurityConfig {
 				.requestMatchers("/h2-console/**, /h2-console/login.jsp").permitAll()
 				.anyRequest().authenticated()
 			)
-			.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
 //			.exceptionHandling()
 //			.authenticationEntryPoint(entryPoint)
 //			.and()

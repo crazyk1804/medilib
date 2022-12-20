@@ -3,14 +3,26 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import imgCity from '../../assets/images/pexels-brayden-law-2096700.jpg';
 import {LoginForm} from "../../components/base/login-form/LoginForm";
+import {useContext} from "react";
+import {GlobalContext} from "../../context/global/GlobalContext";
 
 export default function LoginView() {
+	const { login } = useContext(GlobalContext);
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const data = new FormData(event.currentTarget);
+		const identity = data.get('identity') as string;
+		const password = data.get('password') as string;
+		if(!identity || !password) {
+
+		}
+
+		login({
+			identity: data.get('identity') as string,
+			password: data.get('password') as string
+		})
 		console.log({
-			email: data.get('email'),
-			password: data.get('password'),
+			identity, password
 		});
 	};
 

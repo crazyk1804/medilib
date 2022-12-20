@@ -8,9 +8,11 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -20,16 +22,17 @@ import own.crazyk.medilib.web.jwt.JWTRequestFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-//	private AuthenticationEntryPoint entryPoint;
+	private AuthenticationEntryPoint entryPoint;
 	private final UserDetailsService userDetailsService;
 
-	@Value("jwt.private.key")
+	@Value("${jwt.private.key}")
 	private String privateKey;
 	@Value("#{ new Long('${jwt.expiry.duration}')}")
 	private long expiryDuration;
 
-	public SecurityConfig(UserDetailsService userDetailsService) {
+	public SecurityConfig(UserDetailsService userDetailsService, AuthenticationEntryPoint entryPoint) {
 		this.userDetailsService = userDetailsService;
+		this.entryPoint = entryPoint;
 	}
 
 	@Bean
@@ -63,15 +66,14 @@ public class SecurityConfig {
 				.requestMatchers("/h2-console/**, /h2-console/login.jsp").permitAll()
 				.anyRequest().authenticated()
 			)
-			.addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
-//			.exceptionHandling()
-//			.authenticationEntryPoint(entryPoint)
-//			.and()
-//			.sessionManagement()
-//			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//			.and()
-//			.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-//		;
+			.exceptionHandling()
+			.authenticationEntryPoint(entryPoint)
+			.and()
+			.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
+		;
 		return http.build();
 	}
 

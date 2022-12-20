@@ -1,4 +1,5 @@
 import {ReactNode} from "react";
+import {Credential} from "../context/global/TypeDefs";
 
 export interface ACTION {
 	type: string
@@ -18,6 +19,11 @@ export interface ReactParent {
 }
 
 export interface GlobalContextState {
-	loginUser?: LoginUser
+	loginUser?: LoginUser,
+	login: (credential: Credential) => void
+
+	alertOpen: boolean,
+	alert: (title: string, message: string) => void
+
 }
 

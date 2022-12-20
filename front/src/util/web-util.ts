@@ -1,4 +1,4 @@
-const serverAddress = '';
+const serverAddress = 'http://localhost:8080';
 
 export const getHeaders = (fetchParam: FetchParam<any>): HeadersInit | undefined => {
 	let headers = {
@@ -39,6 +39,7 @@ export const doFetch = <P, R>(fetchParam: FetchParam<P>): Promise<R> => {
 				reject(new Error(`How can there's NO RESPONSE on request ${ fetchParam.url }`));
 			}
 
+			console.log('response status', response.status)
 			// if(response.status >= 200 && response.status < 300)
 			// 	returC007n response.text();
 			//

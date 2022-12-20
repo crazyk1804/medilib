@@ -1,14 +1,18 @@
-import React from 'react';
+import React, {useContext} from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import LoginView from "./containers/base/LoginView";
 import CssBaseline from "@mui/material/CssBaseline";
+import {GlobalContext, GlobalContextProvider} from "./context/global/GlobalContext";
+import {AlertMessage} from "./components/base/messages/Messages";
 
 function App() {
+	const { alertOpen } = useContext(GlobalContext);
 	return (
 		<>
 			<CssBaseline/>
 			<LoginView/>
+			<AlertMessage open={alertOpen}/>
 		</>
 		// <div className="App">
 		// 	<header className="App-header">

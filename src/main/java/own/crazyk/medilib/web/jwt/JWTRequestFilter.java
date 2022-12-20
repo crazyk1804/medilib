@@ -27,10 +27,15 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		// 헤더의 Authorization 을 찾는다
 		final String requestTokenHeader = request.getHeader("Authorization");
-		String username = null, token;
+		// 토큰을 보내지 않았다면 아무 의미 없다
+		if(requestTokenHeader==null) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
+		String username = null, token;
 		// Bearer 로 시작하는지 판단하는 왜 하는건지는 잘 모르겠다.  불문율 같은건가...
-		if(requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+		if(requestTokenHeader.startsWith("Bearer ")) {
 			token = requestTokenHeader.substring(7);
 		} else {
 			token = requestTokenHeader;

@@ -1,0 +1,1 @@
+export const FN_NOTHING = () => undefined

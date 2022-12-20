@@ -40,10 +40,10 @@ export const LoginForm = ({onSubmit }: LoginFormProps) => {
 					margin="normal"
 					required
 					fullWidth
-					id="email"
-					label="Email Address"
-					name="email"
-					autoComplete="email"
+					id="tboxIdentity"
+					label="User Identity"
+					name="identity"
+					autoComplete="id"
 					autoFocus
 				/>
 				<TextField

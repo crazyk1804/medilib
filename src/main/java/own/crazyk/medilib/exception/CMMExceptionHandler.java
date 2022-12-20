@@ -2,6 +2,7 @@ package own.crazyk.medilib.exception;
 
 import org.apache.catalina.Server;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,6 +20,16 @@ public class CMMExceptionHandler {
 //		tm.setTestValue("좆돼써");
 //		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(tm);
 //	}
+
+	@ExceptionHandler(Exception.class)
+	public ServerResponseEntity<String> handleException(Exception exception) {
+		return ServerResponseEntity.STATUS(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+	}
+
+	@ExceptionHandler(BadCredentialsException.class)
+	public ServerResponseEntity<String> handleBadCredentialException(BadCredentialsException exception) {
+		return ServerResponseEntity.STATUS(HttpStatus.UNAUTHORIZED).body("사용자 ID 혹은 비밀번호를 확인 하세요.");
+	}
 
 	@ExceptionHandler(AuthenticationException.class)
 	public ServerResponseEntity<String> handleAuthenticationException(AuthenticationException exception) {

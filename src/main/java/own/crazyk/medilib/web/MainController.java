@@ -1,15 +1,18 @@
 package own.crazyk.medilib.web;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import own.crazyk.cmm.model.response.ServerResponseEntity;
 import own.crazyk.cmm.util.JWTUtil;
+import own.crazyk.medilib.dto.AuthCredential;
 import own.crazyk.medilib.dto.MemberDTO;
 
 @RestController
@@ -24,7 +27,7 @@ public class MainController {
 	}
 
 	@PostMapping("/authenticate")
-	public ServerResponseEntity<String> authenticate(@RequestBody MemberDTO credential) {
+	public ServerResponseEntity<String> authenticate(@Valid @RequestBody AuthCredential credential) {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(
 						credential.getIdentity(),

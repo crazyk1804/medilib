@@ -1,6 +1,5 @@
 package own.crazyk.medilib.exception;
 
-import org.apache.catalina.Server;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,22 +21,37 @@ public class CMMExceptionHandler {
 //	}
 
 	@ExceptionHandler(Exception.class)
-	public ServerResponseEntity<String> handleException(Exception exception) {
-		return ServerResponseEntity.STATUS(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+	public ServerResponseEntity<ExceptionResponse> handleException(Exception exception) {
+		return ServerResponseEntity.STATUS(HttpStatus.INTERNAL_SERVER_ERROR).body(
+			ExceptionResponse.builder()
+				.message(exception.getMessage())
+				.build()
+		);
 	}
 
 	@ExceptionHandler(BadCredentialsException.class)
-	public ServerResponseEntity<String> handleBadCredentialException(BadCredentialsException exception) {
-		return ServerResponseEntity.STATUS(HttpStatus.UNAUTHORIZED).body("사용자 ID 혹은 비밀번호를 확인 하세요.");
+	public ServerResponseEntity<ExceptionResponse> handleBadCredentialException(BadCredentialsException exception) {
+		return ServerResponseEntity.STATUS(HttpStatus.UNAUTHORIZED).body(
+			ExceptionResponse.builder()
+				.message("사용자 ID 혹은 비밀번호를 확인 하세요.")
+				.userFriendly(UserFriendlyRank.friendly)
+				.build()
+		);
 	}
 
 	@ExceptionHandler(AuthenticationException.class)
-	public ServerResponseEntity<String> handleAuthenticationException(AuthenticationException exception) {
-		return ServerResponseEntity.STATUS(HttpStatus.FORBIDDEN).body(exception.getMessage());
+	public ServerResponseEntity<ExceptionResponse> handleAuthenticationException(AuthenticationException exception) {
+		return ServerResponseEntity.STATUS(HttpStatus.FORBIDDEN).body(
+			ExceptionResponse.builder()
+					.message(exception.getMessage())
+					.build()
+		);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ServerResponseEntity<InvalidArgsResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-		return ServerResponseEntity.STATUS(HttpStatus.BAD_REQUEST).body(new InvalidArgsResponse(exception));
+		return ServerResponseEntity.STATUS(HttpStatus.BAD_REQUEST).body(
+				new InvalidArgsResponse(exception)
+		);
 	}
 }

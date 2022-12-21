@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import own.crazyk.cmm.model.response.ServerResponseEntity;
 import own.crazyk.cmm.util.JWTUtil;
 import own.crazyk.medilib.dto.AuthCredential;
+import own.crazyk.medilib.dto.AuthResponse;
 import own.crazyk.medilib.dto.MemberDTO;
+
+import java.util.HashMap;
 
 @RestController
 @AllArgsConstructor
@@ -27,13 +30,25 @@ public class MainController {
 	}
 
 	@PostMapping("/authenticate")
-	public ServerResponseEntity<String> authenticate(@Valid @RequestBody AuthCredential credential) {
+	public ServerResponseEntity<AuthResponse> authenticate(@Valid @RequestBody AuthCredential credential) {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(
 						credential.getIdentity(),
 						credential.getPassword()
 				));
+
+		// 응답용 사용자 객체(패스워드 삭제)
 		MemberDTO principal = (MemberDTO) authentication.getPrincipal();
-		return ServerResponseEntity.OK(jwtUtil.generateToken(principal));
+		MemberDTO clone = principal.toBuilder().build();
+		clone.setPassword(null);
+
+		// 토큰 생성
+		HashMap<String, Object> claims = new HashMap<>();
+		claims.put("identity", principal.getIdentity());
+		claims.put("username", principal.getUsername());
+		claims.put("authorities", principal.getAuthorities());
+		String token = jwtUtil.generateToken(claims, principal);
+
+		return ServerResponseEntity.OK(AuthResponse.builder().member(clone).token(token).build());
 	}
 }

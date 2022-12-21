@@ -1,10 +1,21 @@
-import {ACTION, GlobalContextState} from "../../general/GeneralTypes";
+import {ACTION, AuthResponse, GlobalContextState} from "../../general/GeneralTypes";
 import {Credential} from "./TypeDefs";
 import {FN_NOTHING} from "../../general/GeneralValues";
 import {MessageProps} from "../../components/base/messages/TypeDefs";
 
+const getLoginMember = () => {
+	const token = localStorage.getItem('token');
+	if(!token) return undefined;
+	try {
+		return JSON.parse(localStorage.getItem('loginMember') || '');
+	} catch(error) {
+		console.log('there is token but no login member data');
+		return undefined;
+	}
+}
+
 export const initialGlobalContextState: GlobalContextState = {
-	loginUser: undefined,
+	loginMember: getLoginMember(),
 	login: FN_NOTHING,
 
 	alertOpen: false,
@@ -16,8 +27,16 @@ export const initialGlobalContextState: GlobalContextState = {
 
 export const GlobalContextReducer = (value: GlobalContextState, action: ACTION): GlobalContextState => {
 	switch(action.type) {
-		case 'LOGIN':
-			return { ...value };
+		case 'LOGIN_SUCCESS':
+			debugger;
+			const authResponse = action.payload as AuthResponse;
+			localStorage.setItem('loginMember', JSON.stringify(authResponse.member));
+			localStorage.setItem('loginToken', authResponse.token);
+			return {
+				...value,
+				// loginMember: authResponse.member
+			};
+
 		case 'ALERT':
 			const alertMessageProps = action.payload as MessageProps;
 			return {

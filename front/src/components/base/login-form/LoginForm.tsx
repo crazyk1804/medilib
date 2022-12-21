@@ -15,10 +15,7 @@ interface LoginFormProps {
 	onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
 }
 
-export const LoginForm = ({onSubmit }: LoginFormProps) => {
-	const [ email, setEmail ] = useState<string>('');
-	const [ password, setPassword ] = useState<string>('');
-
+export const LoginForm = ({ onSubmit }: LoginFormProps) => {
 	return (
 		<Box
 			sx={{

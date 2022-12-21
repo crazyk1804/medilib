@@ -1,3 +1,5 @@
+import {ExceptionResponse} from "../general/GeneralTypes";
+
 const serverAddress = 'http://localhost:8080';
 
 export const getHeaders = (fetchParam: FetchParam<any>): HeadersInit | undefined => {
@@ -40,9 +42,9 @@ export const doFetch = <P, R>(fetchParam: FetchParam<P>): Promise<R> => {
 			}
 
 			console.log('response status', response.status)
-			// if(response.status >= 200 && response.status < 300)
-			// 	returC007n response.text();
-			//
+			if(response.status < 200 || response.status > 300)
+				throw response;
+
 			// throw new Error(`response status: ${ response.status }: ${response.statusText}`);
 			return response.text();
 		}).then(bodyString => {
@@ -54,8 +56,24 @@ export const doFetch = <P, R>(fetchParam: FetchParam<P>): Promise<R> => {
 		}).then((json: R) => {
 			if(!json) return;
 			resolve(json);
-		}).catch(error => {
-			reject(error);
+		}).catch(errorResponse => {
+			errorResponse.text()
+				.then((txt: string) => {
+					try {
+						const json = JSON.parse(txt);
+						const body = json.body as ExceptionResponse;
+						reject(body);
+						// console.log('error body', body.message);
+					} catch(error) {
+						reject(txt);
+						// console.log('error txt', txt);
+					}
+				})
+			// const responseText = errorResponse
+			// console.log('error type: ', typeof(errorResponse), errorResponse);
+			// // reject(error);
+		}).catch(txt => {
+			console.log('error then response text', txt);
 		});
 	});
 };

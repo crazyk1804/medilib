@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Getter @Setter @Builder
+@Getter @Setter @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberDTO implements UserDetails {

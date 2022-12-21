@@ -7,14 +7,15 @@ import {useContext} from "react";
 import {GlobalContext} from "../../context/global/GlobalContext";
 
 export default function LoginView() {
-	const { login } = useContext(GlobalContext);
+	const { login, alert } = useContext(GlobalContext);
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const data = new FormData(event.currentTarget);
 		const identity = data.get('identity') as string;
 		const password = data.get('password') as string;
 		if(!identity || !password) {
-
+			alert('로그인 오류', '사용자 아이디와 패스워드를 모두 입력 해 주세요');
+			return;
 		}
 
 		login({

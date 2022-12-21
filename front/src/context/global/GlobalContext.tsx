@@ -17,10 +17,20 @@ export const GlobalContextProvider = ({children}: ReactParent) => {
 		console.log(token);
 	}
 
+	const alert = (title: string, message: string) => {
+		dispatch({ type: 'ALERT', payload: { title, message } });
+	}
+
+	const alertClose = () => {
+		dispatch({ type: 'ALERT_CLOSE', payload: undefined });
+	}
+
 	return (
 		<GlobalContext.Provider value={{
 			...value,
-			login
+			login,
+			alert,
+			alertClose
 		}}>
 			{children}
 		</GlobalContext.Provider>

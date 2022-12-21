@@ -13,19 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 
 @Getter
-@Setter
 public class InvalidArgsResponse {
-    @Getter
-    @Setter
-    @Builder
-    @AllArgsConstructor
-    public static class InvalidArgument {
-        private String field;
-        private String message;
-        private Object value;
-    }
-
+    private String message;
     private List<InvalidArgument> invalidArgs;
+
+    public UserFriendlyRank getUserFriendly() {
+        return UserFriendlyRank.notReally;
+    }
 
 //	public static class InvalidArgsResponseBuilder {
 //		public InvalidArgsResponseBuilder invalidArgs(MethodArgumentNotValidException exception) {
@@ -54,10 +48,23 @@ public class InvalidArgsResponse {
         exception.getBindingResult().getFieldErrors().forEach(fieldError -> {
             if (fieldMap.containsKey(fieldError.getField())) return;
             fieldMap.put(
-                    fieldError.getField(),
-                    new InvalidArgument(fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue())
+                fieldError.getField(),
+                new InvalidArgument(fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue())
             );
         });
         invalidArgs = new ArrayList<>(fieldMap.values());
+        message = String.join(
+            "\r\n",
+            fieldMap.values().stream().map(
+                x -> String.format("%s은(는) %s.", x.getField(), x.getMessage())
+            ).toList()
+        );
+    }
+
+    @Getter @Setter @Builder @AllArgsConstructor
+    public static class InvalidArgument {
+        private String field;
+        private String message;
+        private Object value;
     }
 }

@@ -4,8 +4,8 @@ import {Credential} from "../context/global/TypeDefs";
 export interface ACTION {
 	type: string
 	payload: any
-	meta: any
-	error: boolean
+	meta?: any
+	error?: boolean
 }
 
 export interface LoginUser {
@@ -24,6 +24,8 @@ export interface GlobalContextState {
 
 	alertOpen: boolean,
 	alert: (title: string, message: string) => void
-
+	alertTitle: string
+	alertMessage: string
+	alertClose: () => void;
 }
 

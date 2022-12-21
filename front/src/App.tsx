@@ -7,12 +7,12 @@ import {GlobalContext, GlobalContextProvider} from "./context/global/GlobalConte
 import {AlertMessage} from "./components/base/messages/Messages";
 
 function App() {
-	const { alertOpen } = useContext(GlobalContext);
+	const { alertOpen, alertTitle, alertMessage, alertClose } = useContext(GlobalContext);
 	return (
 		<>
 			<CssBaseline/>
 			<LoginView/>
-			<AlertMessage open={alertOpen}/>
+			<AlertMessage open={alertOpen} title={alertTitle} message={alertMessage} onClose={alertClose} />
 		</>
 		// <div className="App">
 		// 	<header className="App-header">

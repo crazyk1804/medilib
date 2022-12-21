@@ -1,5 +1,6 @@
 export interface MessageProps {
-    open: boolean
+    open?: boolean
     title?: string
     message?: string
+    onClose?: () => void;
 }
